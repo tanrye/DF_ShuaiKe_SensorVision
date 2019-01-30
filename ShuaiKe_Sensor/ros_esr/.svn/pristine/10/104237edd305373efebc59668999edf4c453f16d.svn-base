@@ -1,0 +1,225 @@
+//
+// Created by wss on 7/1/17.
+//
+
+#include "EsrNode.h"
+
+EsrUserNode::EsrUserNode(int argc, char **pArgv)
+        :m_Init_argc(argc),
+         m_pInit_argv(pArgv)
+{
+	esrBufferClear();
+    rosRunning = false;
+}
+EsrUserNode::~EsrUserNode()
+{
+    if (ros::isStarted())
+    {
+        ros::shutdown();
+        ros::waitForShutdown();
+    }
+    p_esr_ros_thread->join();
+}
+
+void EsrUserNode::init()
+{
+    std::string name;
+
+    ros::init(m_Init_argc, m_pInit_argv, "ros_esr");
+
+    if (!ros::master::check())
+        return;
+
+    ros::start();
+    ros::Time::init();
+    ros::NodeHandle nh;
+
+    name = ros::this_node::getName();
+
+    pcanListener = nh.subscribe(MSG_TOPIC_VEHICLE_PCAN_INFO, 0, &EsrUserNode::pcanCallback, this);
+
+    m_pub_front_radar_info = nh.advertise<msg_radar::RADAR_INFO_MSG>(ROSMSG_TOPIC_FRONT_RADAR_MSG,1);
+
+    p_esr_ros_thread = new boost::thread(boost::bind(&EsrUserNode::run, this));
+
+    rosRunning = true;
+
+}
+
+void EsrUserNode::esrBufferClear(){
+
+    for(int i=0;i<LONG_RANGE_RADAR_MESSAGE_LEN;i++)
+    {
+        esr_rx.esr_obj[i].Track_ID = i+1;
+        esr_rx.esr_obj[i].Track_Range=0;
+        esr_rx.esr_obj[i].Track_Range_Rate=0;
+        esr_rx.esr_obj[i].Track_Angle=0;
+        esr_rx.esr_obj[i].Track_Lat_Rate=0;
+        esr_rx.esr_obj[i].Track_Status=0;
+        esr_rx.esr_obj[i].Track_Width=0;
+        esr_rx.esr_obj[i].is_ACC_Target_Move=false;
+        esr_rx.esr_obj[i].is_ACC_Target_Stat=false;
+        esr_rx.esr_obj[i].is_CMBB_Target_Move=false;
+        esr_rx.esr_obj[i].is_CMBB_Target_Stat=false;
+        esr_rx.esr_obj[i].is_FCW_Target_Move=false;
+        esr_rx.esr_obj[i].is_FCW_Target_Stat=false;
+    }
+
+}
+
+
+void EsrUserNode::run()
+{
+    ROS_INFO_STREAM("ROS Thread");
+
+    ros::Rate loop_rate(100);
+
+    while (ros::ok())
+    {
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
+}
+
+void EsrUserNode::publishData(uint8_t package_num, CAN_MSG* ptr_can_msg)
+{
+    if(rosRunning == false)
+        return;
+    /**
+     * Step 1
+     * */
+    esrBufferClear();
+	
+    if ((package_num > 0) && (NULL != ptr_can_msg) )
+    {
+        CAN_MSG *pmsg_rev = ptr_can_msg;
+	
+        if(package_num > LONG_RANGE_RADAR_MESSAGE_LEN)
+            package_num = LONG_RANGE_RADAR_MESSAGE_LEN;
+
+        for (int i=0; i< package_num; i++)
+        {
+            //object:0x500~0x53F
+            float r = (((pmsg_rev->data[2] & 0x07)<<8) + pmsg_rev->data[3])*0.1;
+
+            if((pmsg_rev->id<=0x53F)&&(pmsg_rev->id>=0x500)&&r!=0)
+            {
+	    	    std::cout << std::setbase(16) << (unsigned short)pmsg_rev->id << " ";
+
+                int j=0;
+                j = (pmsg_rev->id)-0x500;
+                esr_rx.esr_obj[j].Track_ID =j+1;
+                esr_rx.esr_obj[j].Track_Range=(((pmsg_rev->data[2] & 0x07)<<8) +pmsg_rev->data[3])*0.1;
+                unsigned char LatRateByte = (unsigned char)((pmsg_rev->data[0] & 0xFC) >> 2);
+                double LatRate = 0;
+                if(LatRateByte & 0x20)
+                {
+                    LatRateByte = ((~LatRateByte)+1)&0x1F;
+                    LatRate = 0 - LatRateByte;
+                }
+                else
+                    LatRate = LatRateByte;
+                esr_rx.esr_obj[j].Track_Lat_Rate = LatRate * 0.25;
+
+                unsigned char highByte = (unsigned char)(pmsg_rev->data[6] & 0x3F);
+                unsigned char lowByte = (unsigned char)(pmsg_rev->data[7]);
+
+
+                unsigned short spd = (unsigned short)((highByte << 8) + lowByte);
+                double speed = 0;
+                if(spd & 0x2000)
+                {
+                    spd = ((~spd)+1)&0x1FFF;
+                    speed = 0 - spd;
+                }
+                else
+                    speed = spd;
+                esr_rx.esr_obj[j].Track_Range_Rate = (double)(speed)*0.01;
+
+                highByte = (unsigned char)((pmsg_rev->data[1] & 0x1F) >> 3 );
+                lowByte = (unsigned char)(((pmsg_rev->data[2] & 0xF8) >> 3) + ((pmsg_rev->data[1] & 0x07) << 5));
+                unsigned short ang = (highByte << 8) + lowByte;
+                double angle = 0;
+                if(ang & 0x0200)
+                {
+                    ang = ((~ang)+1)&0x01FF;
+                    angle = 0 - ang;
+                }
+                else
+                    angle = ang;
+
+                esr_rx.esr_obj[j].Track_Angle = angle * 0.1 / 180.0 * M_PI;
+
+                esr_rx.esr_obj[j].Track_Status = (pmsg_rev->data[1] & 0xE0) >> 5;
+
+                double width = (double)((unsigned char)(pmsg_rev->data[4] & 0x3c) >> 2);
+                esr_rx.esr_obj[j].Track_Width = width * 0.5;
+
+            }
+            pmsg_rev++;
+        }
+        esr_rx.VehSpeed=CAN_RX_VEHICLE_SPEED*0.0625;
+    }
+
+    /**
+     * Step 2
+     * */
+    int objectIndex=0;
+
+	memset(&front_radarinfo,0, sizeof(front_radarinfo));
+
+    for(int i=0;i<package_num;i++)
+    {
+
+        if(esr_rx.esr_obj[i].Track_Range!=0)
+        {
+            msg_radar::Radar_Object * curObj = &front_radarinfo.objectData[objectIndex];
+            curObj->x = (( esr_rx.esr_obj[i].Track_Range*sin(esr_rx.esr_obj[i].Track_Angle))*100);
+            curObj->y = (esr_rx.esr_obj[i].Track_Range*cos(esr_rx.esr_obj[i].Track_Angle))*100 + 3890/10;
+            curObj->rangeRate = esr_rx.esr_obj[i].Track_Range_Rate;
+            curObj->latRate = esr_rx.esr_obj[i].Track_Lat_Rate;
+            curObj->targetID = esr_rx.esr_obj[i].Track_ID;
+
+            curObj->angle = esr_rx.esr_obj[i].Track_Angle;
+            curObj->range = esr_rx.esr_obj[i].Track_Range;
+            curObj->width = esr_rx.esr_obj[i].Track_Width;
+            curObj->trackStatus = esr_rx.esr_obj[i].Track_Status;
+            if(esr_rx.esr_obj[i].is_ACC_Target_Move)
+                curObj->isACCTarget = TARGET_MOVE;
+            else
+            if(esr_rx.esr_obj[i].is_ACC_Target_Stat)
+                curObj->isACCTarget = TARGET_STAT;
+            else
+                curObj->isACCTarget = 0;
+
+            if(esr_rx.esr_obj[i].is_CMBB_Target_Move)
+                curObj->isCMBBTarget = TARGET_MOVE;
+            else
+            if(esr_rx.esr_obj[i].is_CMBB_Target_Stat)
+                curObj->isCMBBTarget = TARGET_STAT;
+            else
+                curObj->isCMBBTarget = 0;
+
+            if(esr_rx.esr_obj[i].is_FCW_Target_Move)
+                curObj->isFCWTarget = TARGET_MOVE;
+            else
+            if(esr_rx.esr_obj[i].is_FCW_Target_Stat)
+                curObj->isFCWTarget = TARGET_STAT;
+            else
+                curObj->isFCWTarget = 0;
+            objectIndex++;
+        }
+    }
+
+    front_radarinfo.objectNum = objectIndex;
+
+    m_pub_front_radar_info.publish(front_radarinfo);
+}
+
+void EsrUserNode::pcanCallback(const vehicle_msgs::PCANInfo & msg)
+{
+    pcanInfo = msg;
+
+    CAN_RX_VEHICLE_SPEED = pcanInfo.esc2.VehicleSpeed;
+}
+

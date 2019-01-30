@@ -1,0 +1,12 @@
+(cl:in-package vehicle_msgs-msg)
+(cl:export '(BRAKEPEDALSIGNAL-VAL
+          BRAKEPEDALSIGNAL
+          ACCPEDALFAULTFLAG-VAL
+          ACCPEDALFAULTFLAG
+          ROLLINGCOUNTEMS5-VAL
+          ROLLINGCOUNTEMS5
+          ACCPEDALPOS-VAL
+          ACCPEDALPOS
+          CHECKSUMEMS5-VAL
+          CHECKSUMEMS5
+))

@@ -1,0 +1,2 @@
+ros_cam:vehicle_msgs
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/install -G Unix Makefiles

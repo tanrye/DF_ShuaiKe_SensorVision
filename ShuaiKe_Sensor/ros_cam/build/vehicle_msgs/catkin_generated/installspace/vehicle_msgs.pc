@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/install
+
+Name: vehicle_msgs
+Description: Description of vehicle_msgs
+Version: 0.0.1
+Cflags: -I/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/install/include
+Libs: -L/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/install/lib 
+Requires: message_runtime

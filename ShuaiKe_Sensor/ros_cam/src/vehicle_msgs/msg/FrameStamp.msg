@@ -1,0 +1,10 @@
+#MSG FrameStamp
+Header header
+float64 time
+float64  lat
+float64  lng
+float64  height
+float64[3] position
+float64[3] orientation
+float64[3] linearSpeed
+float64[3] angularSpeed 

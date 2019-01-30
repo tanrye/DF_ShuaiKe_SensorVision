@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/LS_N301/catkin_LS301/install
+
+Name: lslidar_n301_driver
+Description: Description of lslidar_n301_driver
+Version: 1.2.0
+Cflags: -I/home/ubuntu/AutoAx7/ShuaiKe_Sensor/LS_N301/catkin_LS301/install/include
+Libs: -L/home/ubuntu/AutoAx7/ShuaiKe_Sensor/LS_N301/catkin_LS301/install/lib 
+Requires: roscpp diagnostic_updater nodelet lslidar_n301_msgs

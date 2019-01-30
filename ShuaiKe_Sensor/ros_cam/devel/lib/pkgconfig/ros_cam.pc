@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/devel
+
+Name: ros_cam
+Description: Description of ros_cam
+Version: 1.0.0
+Cflags: -I/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/src/ros_cam/include
+Libs: -L/home/ubuntu/AutoAx7/ShuaiKe_Sensor/ros_cam/devel/lib 
+Requires: message_runtime roslib roscpp rosconsole vehicle_msgs

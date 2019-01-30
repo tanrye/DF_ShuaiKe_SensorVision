@@ -1,0 +1,98 @@
+Header  header
+int32 	messageID              #为每一个MSG设定唯一的标识码
+
+FrameStamp localStamp
+FrameStamp globalStamp
+ 
+int32 l_numoflaneline
+int32 l_lanelineid
+float64 l_lanepositon
+float64 l_lanecurvature
+float64 l_lanecurvaturederivative
+int32 l_lane_type
+float64 l_heading_angle
+int32  l_lane_mark_color
+int32 l_laneQuality
+int32 l_laneWidthMarking
+int32 l_laneViewRangStart
+int32 l_laneViewRangEnd
+int32 l_laneCrossing
+int32 l_lanePRED_DIST_BASED_EXTRAPOLATION
+int32 l_lanePRED_OTHER_SIDE
+int32 l_lanePRED_OVERRIDE
+int32 l_lanePRED_OCCLUDED_LM_EXTRAPOLATION
+int32 l_lanePRED_HEADWAY_ORIENTED
+int32 l_lanePRED_SOURCE_DIVERGING_LANES
+int32 l_lanePRED_SOURCE_GUARDRAIL_SHADOW
+int32 l_lanePRED_SOURCE_HWE_SPAIN
+int32 l_lanePRED_SOURCE_STD
+int32 l_lanePRED_SOURCE_VRTL_MERGE
+int32 l_laneTCL
+
+
+int32 r_numoflaneline
+int32 r_lanelineid
+float64 r_lanepositon  
+float64 r_lanecurvature  
+float64 r_lanecurvaturederivative 
+int32 r_lane_type
+float64 r_heading_angle  
+int32  r_lane_mark_color
+int32 r_laneQuality
+int32 r_laneWidthMarking
+int32 r_laneViewRangStart
+int32 r_laneViewRangEnd
+int32 r_laneCrossing
+int32 r_lanePRED_DIST_BASED_EXTRAPOLATION
+int32 r_lanePRED_OTHER_SIDE
+int32 r_lanePRED_OVERRIDE
+int32 r_lanePRED_OCCLUDED_LM_EXTRAPOLATION
+int32 r_lanePRED_HEADWAY_ORIENTED
+int32 r_lanePRED_SOURCE_DIVERGING_LANES
+int32 r_lanePRED_SOURCE_GUARDRAIL_SHADOW
+int32 r_lanePRED_SOURCE_HWE_SPAIN
+int32 r_lanePRED_SOURCE_STD
+int32 r_lanePRED_SOURCE_VRTL_MERGE
+int32 r_laneTCL
+
+
+int32 next_l_laneViewRangStart
+int32 next_l_laneViewRangEnd
+int32 next_l_numoflaneline
+int32 next_l_lanelineid
+float64 next_l_lanepositon
+float64  next_l_lanecurvature
+float64 next_l_lanecurvaturederivative
+int32 next_l_lane_type
+float64 next_l_heading_angle
+int32  next_l_lane_mark_color
+int32 next_l_laneQuality
+int32 next_l_laneWidthMarking
+
+int32 next_r_laneViewRangStart
+int32 next_r_laneViewRangEnd
+int32 next_r_numoflaneline
+int32 next_r_lanelineid
+float64 next_r_lanepositon
+float64 next_r_lanecurvature
+float64 next_r_lanecurvaturederivative
+int32 next_r_lane_type
+float64 next_r_heading_angle
+int32  next_r_lane_mark_color
+int32 next_r_laneQuality
+int32 next_r_laneWidthMarking
+
+#0x76B highway road info
+int32 highwayConstructionArea
+int32 highwayRoadType
+int32 highwayHighwayExitRight
+int32 highwayHighwayExitLeft
+float64   highwayProbabilityLeftLane
+float64   highwayProbabilityRightLane
+float64   highwayDriving_peed_left_lane
+float64   highwayDriving_peed_right_lane
+int32 highwayprotocol_version
+
+
+
+

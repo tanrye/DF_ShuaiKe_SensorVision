@@ -1,0 +1,8 @@
+<launch>
+	<!-- Start the novatel monitor node -->
+	<node pkg="ros_cam" type="ros_cam" name="ros_cam" output="screen" cwd="node" required="true">
+	</node>
+
+</launch>
+
+

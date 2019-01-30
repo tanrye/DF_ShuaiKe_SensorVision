@@ -1,0 +1,2 @@
+lslidar_n301-master/lslidar_n301:lslidar_n301-master/lslidar_n301_decoder:lslidar_n301-master/lslidar_n301_driver:lslidar_n301-master/lslidar_n301_msgs
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/LS_N301/catkin_LS301/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/AutoAx7/ShuaiKe_Sensor/LS_N301/catkin_LS301/install -G Unix Makefiles

@@ -1,0 +1,115 @@
+//
+// Created by wss on 7/1/17.
+//
+
+#ifndef PROJECT_MONITOR_NODE_H
+#define PROJECT_MONITOR_NODE_H
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <ros/ros.h>
+#include <ros/network.h>
+#include <boost/thread/thread.hpp>
+
+#include "msg_radar/RADAR_INFO_MSG.h"
+
+#include "vehicle_msgs/PCANInfo.h"
+#include "vehicle_msgs/BCANInfo.h"
+
+//<?driver vehicle pub msg, vehicle monitor receive
+//<?100HZ
+#define MSG_TOPIC_VEHICLE_PCAN_INFO "PCANInfo"
+
+#define ROSMSG_TOPIC_FRONT_RADAR_MSG "FRONT_RADAR_MSG"
+
+
+typedef struct can_msg
+{
+    uint16_t id;      // 11/29-bit message identifier
+    uint8_t data[8]; // Data of the message (DATA[0]..DATA[7])
+}CAN_MSG;
+
+typedef struct can_msg_data
+{
+    uint8_t data[8];
+}CAN_MSG_DATA;
+
+#define CAN_MSG_LENGTH 10
+#define LONG_RANGE_RADAR_MESSAGE_LEN  64
+#define LONG_RANGE_RADAR_MAX_SIZE     LONG_RANGE_RADAR_MESSAGE_LEN * CAN_MSG_LENGTH
+
+
+
+typedef struct LONG_RANGE_RADAR_DATA {
+    unsigned short id[LONG_RANGE_RADAR_MESSAGE_LEN];
+    CAN_MSG_DATA message[LONG_RANGE_RADAR_MESSAGE_LEN];
+}LONG_RADAR_DATA;
+
+
+#define     TARGET_STAT                 1
+#define     TARGET_MOVE                 2
+typedef  struct
+{
+    //0x500~0x53F
+    double Track_Range;
+    double Track_Range_Rate;
+    double Track_Lat_Rate;
+    double Track_Angle;
+    int Track_ID;
+    double Track_Width;
+    int Track_Status;
+    bool is_ACC_Target_Stat;// 0:not acc target stat;1:is acc target stat;
+    bool is_ACC_Target_Move;
+    bool is_CMBB_Target_Stat;
+    bool is_CMBB_Target_Move;
+    bool is_FCW_Target_Stat;
+    bool is_FCW_Target_Move;
+} ESR_Obj;
+
+typedef  struct
+{
+    ESR_Obj esr_obj[64];
+    double  VehSpeed;
+
+} ESR_data;
+
+
+class EsrUserNode
+{
+public:
+    EsrUserNode(int argc, char **pArgv);
+    ~EsrUserNode();
+    void init();
+    void publishData(uint8_t package_num,CAN_MSG* ptr_can_msg );
+	void esrBufferClear(void);
+
+public:
+    vehicle_msgs::PCANInfo pcanInfo;
+
+
+private:
+    void run();
+    void pcanCallback(const vehicle_msgs::PCANInfo & msg);
+
+private:
+    int m_Init_argc;
+    char** m_pInit_argv;
+
+    bool rosRunning;
+
+    boost::thread *p_esr_ros_thread;
+
+    ros::Subscriber pcanListener;
+
+    msg_radar::RADAR_INFO_MSG front_radarinfo;
+
+    ros::Publisher  m_pub_front_radar_info;
+
+    ESR_data esr_rx;
+    float CAN_RX_VEHICLE_SPEED;
+};
+
+
+#endif //PROJECT_MONITOR_NODE_H

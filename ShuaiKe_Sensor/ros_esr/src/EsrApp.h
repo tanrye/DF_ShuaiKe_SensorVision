@@ -1,0 +1,48 @@
+//
+// Created by wss on 7/1/17.
+//
+
+#ifndef PROJECT_MONITOR_WINDOWS_H
+#define PROJECT_MONITOR_WINDOWS_H
+
+
+#include <arpa/inet.h>
+
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
+
+#include "UDPSocket.h"
+#include "EsrNode.h"
+
+
+class EsrApplication
+{
+public:
+    EsrApplication(int argc, char** argv);
+    ~EsrApplication();
+
+private:
+    void start(void);
+    void processPendingDatagrams( void);
+
+private:
+    EsrUserNode esrUserNode;
+
+    LONG_RADAR_DATA front_radar_data;
+
+    char pBufferESR[LONG_RANGE_RADAR_MAX_SIZE] = {0};
+
+    CAN_MSG ptr_can_msg[LONG_RANGE_RADAR_MAX_SIZE];
+
+    boost::thread *esrThread;
+
+    UDPSocket *esrUdpSocket;
+
+    //string esrUrl = "172.23.100.102";
+    //string esrUrl = "10.7.34.51";
+    //string esrUrl = "172.23.100.109";
+    string esrUrl = "192.168.0.180";
+    uint16_t esrPort;
+
+};
+#endif //PROJECT_MONITOR_WINDOWS_H

@@ -1,0 +1,15 @@
+2019-01-13 16:53:48: -- Analysis Started by User Command
+2019-01-13 16:53:48: Changes: 6, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 28
+2019-01-13 16:53:48: Left to Right: Copy File: 2 
+2019-01-13 16:53:48: Right to Left: Copy File: 4 
+2019-01-13 16:53:48: -- Analysis Complete. Time 00:00:02, Speed: 14 files/s
+2019-01-13 16:53:48: 
+2019-01-13 16:53:50: == Sync Started by User Command
+2019-01-13 16:53:51: Copy Over 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/bin/RSDS_Monitor' -> 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/bin/RSDS_Monitor' (94,136)
+2019-01-13 16:53:51: Copy Over 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/CLocalMapMonitor.cpp' -> 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/CLocalMapMonitor.cpp' (5,629)
+2019-01-13 16:53:51: Copy Over 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/MyUnderstandProject.udb' -> 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/MyUnderstandProject.udb' (125,349)
+2019-01-13 16:53:51: Copy Over 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/tmp/CLocalMapMonitor.o' -> 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/tmp/CLocalMapMonitor.o' (12,096)
+2019-01-13 16:53:51: Copy Over 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/tmp/CSubscribeData.o' -> 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/tmp/CSubscribeData.o' (109,432)
+2019-01-13 16:53:51: Copy Over 'sftp://172.23.100.2/home/ubuntu/AutoAx7/RSDS_Monitor/tmp/main.o' -> 'D:/VMware/Share/SmartEV/DFEV/RSDS_Monitor/tmp/main.o' (7,912)
+2019-01-13 16:53:51: == Sync Complete. Time: 00:00:02, Speed: 170 KB/s, OK: 6, Errors: 0
+2019-01-13 16:53:51: 
